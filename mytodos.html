@@ -2,7 +2,7 @@
 	<title> My Todos </title>
 </head>
 <body class="container">
-	{{>mytodos}}
+
 </body>
 
 <!-- MY TODOS -->
@@ -48,3 +48,44 @@
 	</p>
 	{{/if}}
 </template>
+
+
+
+<!--================= ROUTER TEMPLATES ===================-->
+
+<!-- APP TEMPLATE -->
+<template name="main">
+	<header class="container text-center">
+		<h1> TaskAtHand </h1>
+
+		<ul class="nav nav-pills">
+			<li><a href="{{pathFor route='home'}}"> Home </a></li>
+			<li><a href="{{pathFor route='register'}}"> Register </a></li>
+			<li><a href="{{pathFor route='login'}}"> Login </a></li>
+		</ul>
+	</header>
+
+	{{>yield}}
+
+	<footer class="navbar navbar-default navbar-fixed-bottom">
+		<p class="navbar-text text-center"> Task@Hand 2015-2016</p>
+	</footer>
+</template>
+
+<!-- HOME -->
+<template name="home">
+	<h2>Welcome to Todo List App! </h2>
+</template>
+
+<!-- REGISTER -->
+<template name="register">
+	<h2>Registration</h2>
+</template>
+
+<!-- LOGIN -->
+<template name="login">
+	<h2>Login</h2>
+</template>
+
+<!--============== END ROUTER TEMPLATES ==================-->
+
