@@ -1,10 +1,50 @@
 <head>
 	<title> My Todos </title>
 </head>
-<body>
-
+<body class="container">
+	{{>mytodos}}
 </body>
+
+<!-- MY TODOS -->
 <template name="mytodos">
 	<h1>Todo Items</h1>
+	{{>addTodo}}
+	{{>todosCount}}
+	<div>
+		{{#each todo}}
+			{{>todoItem}}
+		{{/each}}
+	</div>
+</template>
 
+<!-- TODO ITEM -->
+<template name="todoItem">
+	<blockquote class="todo-item">
+		<div class="{{checked}}">
+			<input type="checkbox" {{ checked }}>
+			<input type="text" value="{{name}}" name="taskName" size="50%">
+			<div class="pull-right">
+				<button class="btn btn-danger remove-task"><span class="glyphicon glyphicon-trash"></span></button>
+			</div>
+		</div>
+	</blockquote>
+</template>
+
+<!-- ADD TODO -->
+<template name="addTodo">
+	<form>
+		<div class="form-group">
+			Create task:
+			<input type="text" class="form-control"	 placeholder="Task name" name="taskName">
+		</div>
+	</form>
+</template>
+
+<!-- TODOS COUNT -->
+<template name="todosCount">
+	{{#if total}}
+	<p class="bg-info text-info todos-count">
+		You have completed {{ completed }} out of {{ total }} tasks!
+	</p>
+	{{/if}}
 </template>

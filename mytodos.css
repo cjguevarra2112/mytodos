@@ -1,1 +1,18 @@
 /* CSS declarations go here */
+
+.todo-item input[type=text] {
+	border:none;
+}
+
+.todo-item input[type=text]:focus {
+	border:none;
+}
+
+.todo-item .checked input[type=text] {
+	text-decoration: line-through;
+}
+
+.todos-count {
+	padding:1%;
+	border-radius: 7px;
+}
