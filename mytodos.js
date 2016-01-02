@@ -1,10 +1,12 @@
 Todos = new Mongo.Collection("todos");
+Lists = new Mongo.Collection("lists");
 
 if(Meteor.isClient) {
 	/* Todos */
 	Template.mytodos.helpers({
 		'todo': function() {
-			return Todos.find({}, {sort: {createdAt: -1}});
+			var currentList = this._id;
+			return Todos.find({listId: currentList}, {sort: {createdAt: -1}});
 		}
 	});
 	/* END Todos */
@@ -17,6 +19,8 @@ if(Meteor.isClient) {
 	});
 
 	Template.todoItem.events({
+
+		// remove task
 		'click .remove-task': function(event) {
 			event.preventDefault();
 			var taskId = this._id;
@@ -26,6 +30,7 @@ if(Meteor.isClient) {
 			}
 		},
 
+		// set task as complete
 		'change [type=checkbox]': function() {
 			var taskId = this._id;
 			var isCompleted = this.completed;
@@ -33,6 +38,7 @@ if(Meteor.isClient) {
 			Todos.update({_id: taskId}, {$set: {completed: updatedStatus}});
 		},
 
+		// update task on change
 		'keyup [name=taskName]': function(event) {
 			if (event.which == 13 || event.which == 37) {
 				$(event.target).blur();
@@ -49,13 +55,15 @@ if(Meteor.isClient) {
 	Template.addTodo.events({
 		'submit form': function(event) {
 			event.preventDefault();
-			var taskName = $("[name=taskName]").val();
+			var taskName = $("[name=newTaskName]").val();
+			var currentList = this._id;
 			Todos.insert({
 				name: taskName,
 				completed: false,
-				createdAt: new Date()
+				createdAt: new Date(),
+				listId: currentList
 			});
-			$("[name=taskName]").val("");
+			$("[name=newTaskName]").val("");
 		}
 	});
 	/* END Add Todo */
@@ -63,13 +71,41 @@ if(Meteor.isClient) {
 	/* Todo Count */
 	Template.todosCount.helpers({
 		'completed': function() {
-			return Todos.find({completed: true}).count();
+			var currentList = this._id;
+			return Todos.find({listId: currentList, completed: true}).count();
 		},
 		'total': function() {
-			return Todos.find().count();
+			var currentList = this._id;
+			return Todos.find({listId: currentList}).count();
 		}
 	});
 	/* END Todo Count */
+
+	/* Lists */
+	Template.lists.helpers({
+		'list': function() {
+			return Lists.find({}, {sort: {name: 1}});
+		}
+	});
+	/* END Lists */
+
+	/* Add List */
+	Template.addList.events({
+		'submit form': function(event) {
+			event.preventDefault();
+
+			var listName = $("[name=listName]").val();
+			Lists.insert({
+				'name': listName
+			}, function(error, results){
+				var listId = results;
+				Router.go("listPage", {_id: listId});
+			});
+			$("[name=listName]").val("");
+
+		}
+	});
+	/* END Add List */
 
 }
 
@@ -86,6 +122,15 @@ Router.configure({
 Router.route("/", {
 	name: "home",
 	template: "home"
+});
+
+Router.route("/list/:_id", {
+	name: "listPage",
+	template:"listPage",
+	data: function() {
+		var currentList = this.params._id;
+		return Lists.findOne({_id: currentList});
+	}
 });
 
 Router.route("/register");

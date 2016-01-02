@@ -7,7 +7,6 @@
 
 <!-- MY TODOS -->
 <template name="mytodos">
-	<h1>Todo Items</h1>
 	{{>addTodo}}
 	{{>todosCount}}
 	<div>
@@ -35,7 +34,7 @@
 	<form>
 		<div class="form-group">
 			Create task:
-			<input type="text" class="form-control"	 placeholder="Task name" name="taskName">
+			<input type="text" class="form-control"	 placeholder="Task name" name="newTaskName">
 		</div>
 	</form>
 </template>
@@ -46,6 +45,8 @@
 	<p class="bg-info text-info todos-count">
 		You have completed {{ completed }} out of {{ total }} tasks!
 	</p>
+	{{else}}
+		<p class="text-info text-center"> No tasks yet. </p>
 	{{/if}}
 </template>
 
@@ -57,35 +58,95 @@
 <template name="main">
 	<header class="container text-center">
 		<h1> TaskAtHand </h1>
+	</header>
+	{{>navigation}}
 
+	<div class="row content">
+		<!-- sidebar -->
+		<div class="col-lg-4">
+			{{>lists}}
+		</div>
+
+		<!-- content -->
+		<div class="col-lg-8">
+			{{>yield}}
+		</div>
+	</div>
+
+	<footer class="navbar navbar-default navbar-fixed-bottom text-center">
+		<p class="navbar-text text-center"> Task@Hand 2015-2016</p>
+	</footer>
+</template>
+<!--/ APP TEMPLATE -->
+
+
+<!-- NAVIGATION -->
+<template name="navigation">
+	<nav class="text-center">
 		<ul class="nav nav-pills">
 			<li><a href="{{pathFor route='home'}}"> Home </a></li>
 			<li><a href="{{pathFor route='register'}}"> Register </a></li>
 			<li><a href="{{pathFor route='login'}}"> Login </a></li>
 		</ul>
-	</header>
-
-	{{>yield}}
-
-	<footer class="navbar navbar-default navbar-fixed-bottom">
-		<p class="navbar-text text-center"> Task@Hand 2015-2016</p>
-	</footer>
+	</nav>
 </template>
+<!--/ NAVIGATION -->
+
+<!-- LISTS -->
+<template name="lists">
+	<div class="panel">
+		<div class="panel-heading">
+			<h3> Todo Lists </h3>
+		</div>
+		<div class="panel-body">
+			{{>addList}}
+			<div class="list-group">
+				{{#each list}}
+				<a href="{{pathFor route='listPage'}}" class="list-group-item"> {{name}} </a>
+				{{/each}}
+			</div>
+		</div>
+	</div>
+</template>
+<!--/ LISTS -->
+
+<!-- Add LIST -->
+<template name="addList">
+	<form>
+		<div class="form-group">
+			<input type="text" class="form-control" placeholder="Create new list..." name="listName">
+		</div>
+	</form>
+</template>
+<!--/ ADD LIST -->
+
+<!-- LIST PAGE -->
+<template name="listPage">
+	<h2>Tasks for {{ name }}</h2>
+	{{>mytodos}}
+</template>
+<!--/ LIST PAGE -->
+
+
+
 
 <!-- HOME -->
 <template name="home">
-	<h2>Welcome to Todo List App! </h2>
+	<h2> Welcome to Todo List App! </h2>
 </template>
+<!--/ HOME -->
 
 <!-- REGISTER -->
 <template name="register">
 	<h2>Registration</h2>
 </template>
+<!--/ REGISTER -->
 
 <!-- LOGIN -->
 <template name="login">
 	<h2>Login</h2>
 </template>
+<!--/ LOGIN -->
 
 <!--============== END ROUTER TEMPLATES ==================-->
 
