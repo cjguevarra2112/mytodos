@@ -6,7 +6,8 @@ if(Meteor.isClient) {
 	Template.mytodos.helpers({
 		'todo': function() {
 			var currentList = this._id;
-			return Todos.find({listId: currentList}, {sort: {createdAt: -1}});
+			var currentUser = Meteor.userId();
+			return Todos.find({listId: currentList, createdBy: currentUser}, {sort: {createdAt: -1}});
 		}
 	});
 	/* END Todos */
@@ -57,10 +58,13 @@ if(Meteor.isClient) {
 			event.preventDefault();
 			var taskName = $("[name=newTaskName]").val();
 			var currentList = this._id;
+			var currentUser = Meteor.userId();
+
 			Todos.insert({
 				name: taskName,
 				completed: false,
 				createdAt: new Date(),
+				createdBy: currentUser,
 				listId: currentList
 			});
 			$("[name=newTaskName]").val("");
@@ -84,26 +88,17 @@ if(Meteor.isClient) {
 	/* Lists */
 	Template.lists.helpers({
 		'list': function() {
-			return Lists.find({}, {sort: {name: 1}});
+			var currentUser = Meteor.userId();
+			return Lists.find({createdBy: currentUser}, {sort: {name: 1}});
 		},
 		'activeList': function() {
 			var listId = this._id;
-			var currentList = Iron.Location.get().path.split("/").pop();
+			// var currentList = Iron.Location.get().path.split("/").pop();
+			var currentList = Router.current().params._id;
 
 			return listId == currentList ? "active" : "";
 		}
 	});
-	/*
-	Template.lists.events({
-		'click .list-group-item': function() {
-			var currentListId = this._id;
-			var name = this.name;
-			var currentRouteParam = Iron.Location.get().path;
-			console.log(currentRouteParam.split("/").pop());
-
-		}
-	});
-	*/
 	/* END Lists */
 
 	/* Add List */
@@ -112,8 +107,11 @@ if(Meteor.isClient) {
 			event.preventDefault();
 
 			var listName = $("[name=listName]").val();
+			var currentUser = Meteor.userId();
+
 			Lists.insert({
-				'name': listName
+				'name': listName,
+				'createdBy': currentUser
 			}, function(error, results){
 				var listId = results;
 				Router.go("listPage", {_id: listId});
@@ -132,7 +130,60 @@ if(Meteor.isClient) {
 			return page == currentPage ? "active" : "";
 		}
 	});
+
+	Template.navigation.events({
+		'click .logout': function(event) {
+			event.preventDefault();
+			Meteor.logout();
+			Router.go("login");
+		}
+	});
 	/* END NAVIGATION */
+
+
+
+	/* REGISTER */
+	Template.register.events({
+		'submit form': function(event) {
+			event.preventDefault();
+
+			var email = $("[name=email]").val();
+			var password = $("[name=password]").val();
+
+			Accounts.createUser({
+				email: email,
+				password: password
+			}, function(error) {
+				if (error) {
+					alert(error.reason);
+				} else {
+					Router.go("home");
+				}
+			});
+		}
+	});
+	/* END REGISTER */
+
+	/* LOGIN */
+	Template.login.events({
+		'submit form': function(event) {
+			event.preventDefault();
+
+			var email = $("[name=email]").val();
+			var password = $("[name=password]").val();
+
+			Meteor.loginWithPassword(email, password, function(error) {
+				if (error) {
+					alert(error);
+				}
+			});
+			$("[name=email]").val("");
+			$("[name=password]").val("");
+
+		}
+	});
+
+	/* END LOGIN */
 
 }
 

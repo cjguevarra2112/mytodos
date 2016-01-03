@@ -64,7 +64,14 @@
 	<div class="row content">
 		<!-- sidebar -->
 		<div class="col-lg-4">
-			{{>lists}}
+			{{#if currentUser}}
+				{{>lists}}
+			{{else}}
+			<div class="jumbotron">
+				<h2>Sign in to create your own Todo Lists! </h2>
+			</div>
+
+			{{/if}}
 		</div>
 
 		<!-- content -->
@@ -84,9 +91,15 @@
 <template name="navigation">
 	<nav class="text-center">
 		<ul class="nav nav-pills">
+
 			<li class="{{ activeIfSelected 'home' }}"><a href="{{pathFor route='home'}}" class="page">Home</a></li>
-			<li class="{{ activeIfSelected 'register' }}"><a href="{{pathFor route='register'}}" class="page">Register</a></li>
-			<li class="{{ activeIfSelected 'login' }}"><a href="{{pathFor route='login'}}" class="page">Login</a></li>
+			{{#if currentUser}}
+				<li><a href="#" class="logout">Logout</a></li>
+			{{else}}
+				<li class="{{ activeIfSelected 'register' }}"><a href="{{pathFor route='register'}}" class="page">Register</a></li>
+				<li class="{{ activeIfSelected 'login' }}"><a href="{{pathFor route='login'}}" class="page">Login</a></li>
+			{{/if}}
+
 		</ul>
 	</nav>
 </template>
@@ -136,15 +149,42 @@
 </template>
 <!--/ HOME -->
 
+
+
 <!-- REGISTER -->
 <template name="register">
 	<h2>Registration</h2>
+	<form class="register">
+		<div class="form-group">
+			<input type="email" class="form-control" placeholder="Email" name="email">
+		</div>
+		<div class="form-group">
+			<input type="password" class="form-control" placeholder="Password" name="password">
+		</div>
+		<div class="form-group">
+			<button type="submit" class="btn btn-lg btn-block btn-info"> Register </button>
+		</div>
+	</form>
+
 </template>
 <!--/ REGISTER -->
+
+
 
 <!-- LOGIN -->
 <template name="login">
 	<h2>Login</h2>
+	<form class="login">
+		<div class="form-group">
+			<input type="email" class="form-control" name="email" placeholder="Email">
+		</div>
+		<div class="form-group">
+			<input type="password" class="form-control" name="password" placeholder="Password">
+		</div>
+		<div class="form-group text-center">
+			<button class="btn btn-lg btn-block btn-primary"> Login </button>
+		</div>
+	</form>
 </template>
 <!--/ LOGIN -->
 
