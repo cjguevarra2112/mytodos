@@ -84,9 +84,9 @@
 <template name="navigation">
 	<nav class="text-center">
 		<ul class="nav nav-pills">
-			<li><a href="{{pathFor route='home'}}"> Home </a></li>
-			<li><a href="{{pathFor route='register'}}"> Register </a></li>
-			<li><a href="{{pathFor route='login'}}"> Login </a></li>
+			<li class="{{ activeIfSelected 'home' }}"><a href="{{pathFor route='home'}}" class="page">Home</a></li>
+			<li class="{{ activeIfSelected 'register' }}"><a href="{{pathFor route='register'}}" class="page">Register</a></li>
+			<li class="{{ activeIfSelected 'login' }}"><a href="{{pathFor route='login'}}" class="page">Login</a></li>
 		</ul>
 	</nav>
 </template>
@@ -102,7 +102,7 @@
 			{{>addList}}
 			<div class="list-group">
 				{{#each list}}
-				<a href="{{pathFor route='listPage'}}" class="list-group-item"> {{name}} </a>
+				<a href="{{pathFor route='listPage'}}" class="list-group-item {{ activeList }}"> {{name}} </a>
 				{{/each}}
 			</div>
 		</div>

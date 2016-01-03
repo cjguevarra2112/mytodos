@@ -85,8 +85,25 @@ if(Meteor.isClient) {
 	Template.lists.helpers({
 		'list': function() {
 			return Lists.find({}, {sort: {name: 1}});
+		},
+		'activeList': function() {
+			var listId = this._id;
+			var currentList = Iron.Location.get().path.split("/").pop();
+
+			return listId == currentList ? "active" : "";
 		}
 	});
+	/*
+	Template.lists.events({
+		'click .list-group-item': function() {
+			var currentListId = this._id;
+			var name = this.name;
+			var currentRouteParam = Iron.Location.get().path;
+			console.log(currentRouteParam.split("/").pop());
+
+		}
+	});
+	*/
 	/* END Lists */
 
 	/* Add List */
@@ -106,6 +123,16 @@ if(Meteor.isClient) {
 		}
 	});
 	/* END Add List */
+
+
+	/* NAVIGATION */
+	Template.navigation.helpers({
+		'activeIfSelected': function(page) {
+			var currentPage = Router.current().route.getName();
+			return page == currentPage ? "active" : "";
+		}
+	});
+	/* END NAVIGATION */
 
 }
 
