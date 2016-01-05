@@ -154,12 +154,12 @@
 <!-- REGISTER -->
 <template name="register">
 	<h2>Registration</h2>
-	<form class="register">
+	<form class="register" id="register">
 		<div class="form-group">
-			<input type="email" class="form-control" placeholder="Email" name="email">
+			<input type="email" class="form-control" placeholder="Email" name="email" required>
 		</div>
 		<div class="form-group">
-			<input type="password" class="form-control" placeholder="Password" name="password">
+			<input type="password" class="form-control" placeholder="Password" name="password" required>
 		</div>
 		<div class="form-group">
 			<button type="submit" class="btn btn-lg btn-block btn-info"> Register </button>
@@ -174,12 +174,12 @@
 <!-- LOGIN -->
 <template name="login">
 	<h2>Login</h2>
-	<form class="login">
+	<form class="login" id="login">
 		<div class="form-group">
-			<input type="email" class="form-control" name="email" placeholder="Email">
+			<input type="email" class="form-control" name="email" placeholder="Email" required>
 		</div>
 		<div class="form-group">
-			<input type="password" class="form-control" name="password" placeholder="Password">
+			<input type="password" class="form-control" name="password" placeholder="Password" required>
 		</div>
 		<div class="form-group text-center">
 			<button class="btn btn-lg btn-block btn-primary"> Login </button>

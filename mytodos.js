@@ -2,6 +2,11 @@ Todos = new Mongo.Collection("todos");
 Lists = new Mongo.Collection("lists");
 
 if(Meteor.isClient) {
+
+	/* END Default validation */
+
+
+
 	/* Todos */
 	Template.mytodos.helpers({
 		'todo': function() {
@@ -140,13 +145,41 @@ if(Meteor.isClient) {
 	});
 	/* END NAVIGATION */
 
+	/* Default validation */
+	$.validator.setDefaults(
+		{
+			rules: {
+				email: {
+					email: true,
+					required: true
+				},
+				password: {
+					minlength: 6,
+					required: true
+				}
+			},
+			messages: {
+				email: {
+					email: "The email you entered is invalid",
+					required: "Email is required"
+				},
+				password: {
+					minlength: "Password should be at aleast {0} characters",
+					required: "Password is required"
+				}
+			}
+		}
+	);
+
+	/* END Default navigation */
+
 
 
 	/* REGISTER */
 	Template.register.events({
 		'submit form': function(event) {
 			event.preventDefault();
-
+			/*
 			var email = $("[name=email]").val();
 			var password = $("[name=password]").val();
 
@@ -160,8 +193,35 @@ if(Meteor.isClient) {
 					Router.go("home");
 				}
 			});
+			*/
+
 		}
 	});
+
+	Template.register.onRendered(function() {
+		var validator = $(".register").validate({
+			submitHandler:function(event) {
+				var email = $("[name=email]").val();
+				var password = $("[name=password]").val();
+
+				Accounts.createUser({
+					email: email,
+					password: password
+				}, function(error) {
+					if (error) {
+						if (error.reason == "Email already exists.") {
+							validator.showErrors({
+								email: "The email you entered is already registered!"
+							});
+						}
+					} else {
+						Router.go("home");
+					}
+				});
+			}
+		});
+	});
+
 	/* END REGISTER */
 
 	/* LOGIN */
@@ -169,12 +229,13 @@ if(Meteor.isClient) {
 		'submit form': function(event) {
 			event.preventDefault();
 
+			/*
 			var email = $("[name=email]").val();
 			var password = $("[name=password]").val();
 
 			Meteor.loginWithPassword(email, password, function(error) {
 				if (error) {
-					alert(error);
+					alert(error.reason);
 				} else {
 					var currentRoute = Router.current().route.getName();
 					if (currentRoute == "login") {
@@ -182,10 +243,38 @@ if(Meteor.isClient) {
 					}
 				}
 			});
-			$("[name=email]").val("");
-			$("[name=password]").val("");
-
+			*/
 		}
+	});
+
+	Template.login.onRendered(function () {
+		var validator = $(".login").validate({
+			submitHandler: function(event) {
+				var email = $("[name=email]").val();
+				var password = $("[name=password]").val();
+
+				Meteor.loginWithPassword(email, password, function(error) {
+					if (error) {
+						if (error.reason == "User not found") {
+							validator.showErrors({
+								email: "The email doesn't belong to a registered user!"
+							})
+						}
+
+						if (error.reason == "Incorrect password") {
+							validator.showErrors({
+								password: "Wrong password!"
+							});
+						}
+					} else {
+						var currentRoute = Router.current().route.getName();
+						if (currentRoute == "login") {
+							Router.go("home");
+						}
+					}
+				});
+			}
+		});
 	});
 
 	/* END LOGIN */

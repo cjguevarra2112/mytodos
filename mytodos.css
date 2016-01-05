@@ -20,3 +20,11 @@
 .content {
 	padding-bottom: 50px;
 }
+
+input.error {
+	border-color: red;
+}
+
+label.error {
+	color:red;
+}
