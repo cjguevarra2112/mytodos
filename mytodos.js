@@ -3,9 +3,6 @@ Lists = new Mongo.Collection("lists");
 
 if(Meteor.isClient) {
 
-	/* END Default validation */
-
-
 
 	/* Todos */
 	Template.mytodos.helpers({
@@ -179,22 +176,6 @@ if(Meteor.isClient) {
 	Template.register.events({
 		'submit form': function(event) {
 			event.preventDefault();
-			/*
-			var email = $("[name=email]").val();
-			var password = $("[name=password]").val();
-
-			Accounts.createUser({
-				email: email,
-				password: password
-			}, function(error) {
-				if (error) {
-					alert(error.reason);
-				} else {
-					Router.go("home");
-				}
-			});
-			*/
-
 		}
 	});
 
@@ -228,22 +209,6 @@ if(Meteor.isClient) {
 	Template.login.events({
 		'submit form': function(event) {
 			event.preventDefault();
-
-			/*
-			var email = $("[name=email]").val();
-			var password = $("[name=password]").val();
-
-			Meteor.loginWithPassword(email, password, function(error) {
-				if (error) {
-					alert(error.reason);
-				} else {
-					var currentRoute = Router.current().route.getName();
-					if (currentRoute == "login") {
-						Router.go("home");
-					}
-				}
-			});
-			*/
 		}
 	});
 
@@ -281,19 +246,19 @@ if(Meteor.isClient) {
 
 }
 
-if(Meteor.isServer) {
-
-}
-
 
 /**************** ROUTING *****************/
 Router.configure({
-	layoutTemplate: "main"
+	layoutTemplate: "main",
+	loadingTemplate: "loading"
 });
 
 Router.route("/", {
 	name: "home",
-	template: "home"
+	template: "home",
+	waitOn: function() {
+		return Meteor.subscribe("lists");
+	}
 });
 
 Router.route("/list/:_id", {
@@ -311,6 +276,10 @@ Router.route("/list/:_id", {
 		} else {
 			this.render("login");
 		}
+	},
+	waitOn: function() {
+		var currentList = this.params._id;
+		return [Meteor.subscribe("lists"), Meteor.subscribe("todos", currentList)];
 	}
 });
 
@@ -335,3 +304,17 @@ Router.route("/login", {
 		}
 	}
 });
+
+
+if(Meteor.isServer) {
+
+	Meteor.publish("lists", function() {
+		var currentUser = this.userId;
+		return Lists.find({createdBy: currentUser});
+	});
+
+	Meteor.publish("todos", function(currentList) {
+		var currentUser = this.userId;
+		return Todos.find({createdBy: currentUser, listId: currentList});
+	});
+}
